@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mabatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper  namespace="cn.jbit.smbms.dao.provider.ProviderDao">
+	<resultMap type="Provider" id="ProviderMap">
+		<id property="id" column="id"/>
+	</resultMap>
+	<insert id="insert">
+		insert into smbms_provider(proCode,proName,proDesc,proPhone,proFax,createdBy,creationDate,modifyDate,modifyBy,proAddress,proContact,licPicPath) 
+		values(#{proCode},#{proName},#{proDesc},#{proPhone},#{proFax},#{createdBy},#{creationDate},#{modifyDate},#{modifyBy},#{proAddress},#{proContact},#{licPicPath})
+	</insert>
+	<delete id="delete">
+		delete from smbms_provider where id=#{id}
+	</delete>
+	<update id="update">
+		update smbms_provider 
+		<set>
+			<if test="proCode!=null and proCode!=''">proCode=#{proCode},</if>
+			<if test="proName!=null and proName!=''">proName=#{proName},</if>
+			<if test="proDesc!=null and proDesc!=''">proDesc=#{proDesc},</if>
+			<if test="proPhone!=null and proPhone!=''">proPhone=#{proPhone},</if>
+			<if test="proFax!=null and proFax!=''">proFax=#{proFax},</if>
+			<if test="createdBy!=null">createdBy=#{createdBy},</if>
+			<if test="creationDate!=null">creationDate=#{creationDate},</if>
+			<if test="modifyDate!=null">modifyDate=#{modifyDate},</if>
+			<if test="modifyBy!=null">modifyBy=#{modifyBy},</if>
+			<if test="proAddress!=null and proAddress!=''">proAddress=#{proAddress},</if>
+			<if test="proContact!=null and proContact!=''">proContact=#{proContact},</if>
+		</set> 
+		where id=#{id}
+	</update>
+	<select id="select" resultType="Provider">
+		select * from smbms_provider
+		<where>
+			<if test="id!=null">AND id=#{id}</if>
+		</where>
+	</select>
+	
+	<select id="selectByPage" resultMap="ProviderMap">
+		select * from smbms_provider 
+		<where>
+			<if test="proCode!=null and proCode!=''">AND proCode=#{proCode}</if>
+			<if test="proName!=null and proName!=''">AND proName LIKE CONCAT('%',#{proName},'%')</if>
+		</where>
+		ORDER BY creationDate DESC LIMIT #{from},#{pageSize}
+	</select>
+	<select id="selectCount" resultType="int">
+		SELECT COUNT(*) FROM smbms_provider
+		<where>
+			<if test="proCode!=null and proCode!=''">AND proCode=#{proCode}</if>
+			<if test="proName!=null and proName!=''">AND proName LIKE CONCAT('%',#{proName},'%')</if>
+		</where>
+	</select>
+</mapper>

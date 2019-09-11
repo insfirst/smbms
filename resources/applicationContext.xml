@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+       
+        
+        
+        <!-- 引入连接数据库的属性文件 -->
+        <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        	<property name="location" value="classpath:database.properties"/>
+        </bean>
+        
+        <!-- 创建数据源 -->
+        <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+        	<property name="driverClassName" value="${driver}"/>
+        	<property name="url" value="${url}"/>
+        	<property name="username" value="${username}"/>
+        	<property name="password" value="${password}"/>
+        </bean>
+        
+        <!-- 创建会话工厂 -->
+        <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        	<!-- 引用数据源 -->
+        	<property name="dataSource" ref="dataSource"/>
+        	<!-- mybatis配置文件 -->
+        	<property name="configLocation" value="classpath:mybatis-config.xml"/>
+        	<!-- 映射文件位置 -->
+        	<property name="mapperLocations">
+        		<list>
+        			<value>classpath:cn/jbit/smbms/dao/**/*.xml</value>
+        		</list>
+        	</property>
+        </bean>
+        <!-- 扫描mapper接口，自动生成实现类 -->
+        
+       	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        	<property name="basePackage" value="cn.jbit.smbms.dao" />
+        </bean>
+        
+         <!-- 扫描包中注解 -->
+        <context:component-scan base-package="cn.jbit.smbms.dao" />
+        <context:component-scan base-package="cn.jbit.smbms.service" />
+        <!-- 配置声明事务 -->
+        <!-- 创建事务管理bean -->
+       <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" autowire="byName"/>
+        <!-- 配置事务增强 -->
+        <tx:advice id="txAdvice">
+        	<tx:attributes>
+        		<tx:method name="list*" propagation="SUPPORTS"/>
+        		<tx:method name="get*" propagation="SUPPORTS"/>
+        		<tx:method name="add*" propagation="REQUIRED"/>
+        		<tx:method name="insert*" propagation="REQUIRED"/>
+        		<tx:method name="remove*" propagation="REQUIRED"/>
+        		<tx:method name="delete*" propagation="REQUIRED"/>
+        		<tx:method name="update*" propagation="REQUIRED"/>
+        		<tx:method name="modify*" propagation="REQUIRED"/>
+        		<tx:method name="*" propagation="REQUIRED"/>
+        	</tx:attributes>
+        </tx:advice> 
+        
+        <!-- 配置切面 -->
+        <aop:config>
+        	<aop:pointcut expression="execution(* cn.jbit.smbms.service..*.*(..))" id="pointcut"/>
+        	<aop:advisor advice-ref="txAdvice" pointcut-ref="pointcut"/>
+        </aop:config>
+</beans>

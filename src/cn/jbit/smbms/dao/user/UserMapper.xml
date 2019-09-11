@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mabatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.jbit.smbms.dao.user.UserDao">
+	<resultMap type="User" id="userMap">
+		<result property="userRoleName" column="roleName"/>
+	</resultMap>
+	<insert id="insert">
+		insert into smbms_user(userCode,userName,userPassword,gender,birthday,phone,address,userRole,createdBy,creationDate,modifyBy,modifyDate,idPicPath)values
+		(#{userCode},#{userName},#{userPassword},#{gender},#{birthday},#{phone},#{address},#{userRole},#{createdBy},#{creationDate},#{modifyBy},#{modifyDate},#{idPicPath})
+	</insert>
+	<delete id="delete">
+		delete from smbms_user where id=#{id}
+	</delete>
+	<update id="update" >
+		update smbms_user 
+		<set>
+			<if test="userCode!=null and userCode!=''">userCode=#{userCode},</if>
+			<if test="userName!=null and userName!=''">userName LIKE CONCAT('%',#{userName},'%'),</if>
+			<if test="userPassword!=null and userPassword!=''">userPassword=#{userPassword},</if>
+			<if test="gender!=null">gender=#{gender},</if>
+			<if test="birthday!=null">birthday=#{birthday},</if>
+			<if test="phone!=null and phone!=''">phone=#{phone},</if>
+			<if test="address!=null and address!=''">address LIKE CONCAT('%',#{address},'%'),</if>
+			<if test="userRole!=null">userRole=#{userRole},</if>
+			<if test="createdBy!=null">createdBy=#{createdBy},</if>
+			<if test="creationDate!=null">creationDate=#{creationDate},</if>
+			<if test="modifyBy!=null">modifyBy=#{modifyBy},</if>
+			<if test="modifyDate!=null">modifyDate=#{modifyDate},</if>
+			<if test="idPicPath!=null and idPicPath!=''">idPicPath=#{idPicPath},</if>
+		</set>
+		where id=#{id}
+		 <!-- <trim prefix="set" suffixOverrides="," suffix="where id=#{id}">
+		 	<if test="userCode!=null and userCode!=''">userCode=#{userCode},</if>
+			<if test="userName!=null and userName!=''">userName=#{userName}</if>
+		 </trim> -->
+	</update>
+	<select id="selectByName" resultType="User">
+		select * from smbms_user 
+		<where>
+			<if test="userName!=null and userName!=''">
+				userName like CONCAT('%',#{userName},'%')
+			</if>
+		</where>
+	</select>
+	
+	<select id="select" resultMap="userMap" >
+		SELECT u.*,r.roleName FROM smbms_user u INNER JOIN smbms_role r ON r.id=u.userRole
+		<where>
+			<if test="id!=null">AND u.id=#{id}</if>
+			<if test="userCode!=null and userCode!=''">AND userCode=#{userCode}</if>
+			<if test="userName!=null and userName!=''">AND userName LIKE CONCAT('%',#{userName},'%')</if>
+			<if test="userPassword!=null and userPassword!=''">AND userPassword=#{userPassword}</if>
+			<if test="gender!=null">AND gender=#{gender}</if>
+			<if test="birthday!=null">AND birthday=#{birthday}</if>
+			<if test="phone!=null and phone!=''">AND phone=#{phone}</if>
+			<if test="address!=null and address!=''">AND address LIKE CONCAT('%',#{address},'%')</if>
+			<if test="userRole!=null">AND userRole=#{userRole}</if>
+			<if test="createdBy!=null">AND createdBy=#{createdBy}</if>
+			<if test="creationDate!=null">AND creationDate=#{creationDate}</if>
+			<if test="modifyBy!=null">AND modifyBy=#{modifyBy}</if>
+			<if test="modifyDate!=null">AND modifyDate=#{modifyDate}</if>
+			<if test="idPicPath!=null and idPicPath!=''">AND idPicPath=#{idPicPath}</if>
+		</where>		
+	</select>
+	<select id="selectByPage" resultMap="userMap">
+		select u.*,r.roleName from smbms_user u INNER JOIN smbms_role r ON r.id=u.userRole
+		<where>
+			<if test="userName!=null and userName!=''">AND userName LIKE CONCAT('%',#{userName},'%')</if>
+			<if test="userRole!=null">AND userRole=#{userRole}</if>
+		</where>
+		ORDER BY u.creationDate DESC LIMIT #{from},#{pageSize}
+	</select>
+	<select id="selectCount" resultType="int">
+		SELECT COUNT(*) FROM smbms_user
+		<where>
+			<if test="userName!=null and userName!=''">AND userName LIKE CONCAT('%',#{userName},'%')</if>
+			<if test="userRole!=null">AND userRole=#{userRole}</if>
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mabatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper  namespace="cn.jbit.smbms.dao.address.AddressDao">
+	<resultMap type="Address" id="AddressMap">
+		<id property="id" column="id"/>
+	</resultMap>
+	<insert id="insert">
+		insert into smbms_address(contact,addressDesc,postCode,tel,createdBy,creationDate,modifyBy,modifyDate,userId) 
+		values(#{contact},#{addressDesc},#{postCode},#{tel},#{createdBy},#{creationDate},#{modifyBy},#{modifyDate},#{userId})
+	</insert>
+	<delete id="delete">
+		delete from smbms_address where id=#{id}
+	</delete>
+	<update id="update">
+		update smbms_address 
+		<set>
+			<if test="addressDesc!=null and addressDesc!=''">addressDesc=#{addressDesc},</if>
+			<if test="contact!=null and contact!=''">contact=#{contact},</if>
+			<if test="postCode!=null and postCode!=''">postCode=#{postCode},</if>
+			<if test="tel!=null and tel!=''">tel=#{tel},</if>
+			<if test="createdBy!=null">createdBy=#{createdBy},</if>
+			<if test="creationDate!=null">creationDate=#{creationDate},</if>
+			<if test="modifyBy!=null">modifyBy=#{modifyBy},</if>
+			<if test="modifyDate!=null">modifyDate=#{modifyDate},</if>
+			<if test="userId!=null">userId=#{userId},</if>
+		</set> 
+		where id=#{id}
+	</update>
+	<select id="select" resultType="Address">
+		select * from smbms_address
+	</select>
+	
+</mapper>

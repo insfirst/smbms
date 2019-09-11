@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mabatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper  namespace="cn.jbit.smbms.dao.bill.BillDao">
+	<resultMap type="Bill" id="BillMap">
+		<id property="id" column="id"/>
+	</resultMap>
+	<insert id="insert">
+		insert into smbms_bill(billCode,productName,productDesc,productUnit,productCount,totalPrice,isPayment,createdBy,creationDate,modifyBy,modifyDate,providerId) 
+		values(#{billCode},#{productName},#{productDesc},#{productUnit},#{productCount},#{totalPrice},#{isPayment},#{createdBy},#{creationDate},#{modifyBy},#{modifyDate},#{providerId})
+	</insert>
+	<delete id="delete">
+		delete from smbms_bill where id=#{id}
+	</delete>
+	<update id="update">
+		update smbms_bill 
+		<set>
+			<if test="billCode!=null and billCode!=''">billCode=#{billCode},</if>
+			<if test="productName!=null and productName!=''">productName=#{productName},</if>
+			<if test="productDesc!=null and productDesc!=''">productDesc=#{productDesc},</if>
+			<if test="productUnit!=null and productUnit!=''">productUnit=#{productUnit},</if>
+			<if test="productCount!=null and productCount!=''">productCount=#{productCount},</if>
+			<if test="totalPrice!=null and totalPrice!=''">totalPrice=#{totalPrice},</if>
+			<if test="isPayment!=null">isPayment=#{isPayment},</if>
+			<if test="createdBy!=null">createdBy=#{createdBy},</if>
+			<if test="creationDate!=null and creationDate!=''">creationDate=#{creationDate},</if>
+			<if test="modifyBy!=null">modifyBy=#{modifyBy},</if>
+			<if test="modifyDate!=null and modifyDate!=''">modifyDate=#{modifyDate},</if>
+			<if test="providerId!=null">providerId=#{providerId},</if>
+		</set> 
+		where id=#{id}
+	</update>
+	<select id="select" resultType="Bill">
+		SELECT b.*,p.proName FROM smbms_bill AS b INNER JOIN  smbms_provider AS p ON b.providerId=p.id
+		<where>
+			<if test="id!=null">and b.id=#{id}</if>
+			<if test="billCode!=null and billCode!=''">and billCode like CONCAT('%',#{billCode},'%')</if>
+			<if test="productName!=null and productName!=''">and productName like CONCAT('%',#{productName},'%')</if>
+			<if test="productDesc!=null and productDesc!=''">and productDesc=#{productDesc}</if>
+			<if test="productUnit!=null and productUnit!=''">and productUnit=#{productUnit}</if>
+			<if test="productCount!=null and productCount!=''">and productCount=#{productCount}</if>
+			<if test="totalPrice!=null and totalPrice!=''">and totalPrice=#{totalPrice}</if>
+			<if test="isPayment!=null">and isPayment=#{isPayment}</if>
+			<if test="createdBy!=null">and createdBy=#{createdBy}</if>
+			<if test="creationDate!=null and creationDate!=''">and creationDate=#{creationDate}</if>
+			<if test="modifyBy!=null">and modifyBy=#{modifyBy}</if>
+			<if test="modifyDate!=null and modifyDate!=''">and modifyDate=#{modifyDate}</if>
+			<if test="providerId!=null">and providerId=#{providerId}</if>
+		</where>		
+	</select>
+	<!-- 分页条件查询 -->
+	<select id="listByPage" resultMap="BillMap">
+		SELECT b.*,p.proName FROM smbms_bill AS b INNER JOIN  smbms_provider AS p ON b.providerId=p.id
+		<where>
+			<if test="productName!=null and productName!=''">and productName LIKE CONCAT('%',#{productName},'%')</if>
+			<if test="providerId!=null">and providerId=#{providerId}</if>
+			<if test="isPayment!=null">and isPayment=#{isPayment}</if>
+		</where>
+		ORDER BY b.creationDate DESC LIMIT #{from},#{pageSize}
+	</select>
+	<!-- 查询记录条数 -->
+	<select id="selectCount" resultType="int">
+		SELECT COUNT(*) FROM smbms_bill
+		<where>
+			<if test="productName!=null and productName!=''">and productName LIKE CONCAT('%',#{productName},'%')</if>
+			<if test="providerId!=null">and providerId=#{providerId}</if>
+			<if test="isPayment!=null">and isPayment=#{isPayment}</if>
+		</where>
+	</select>
+	<select id="selectByPayment" resultMap="BillMap">
+		select * from smbms_bill 
+		<where>
+			<if test="billCode!=null and billCode!=''">and billCode like CONCAT('%',#{billCode},'%')</if>
+			<if test="productName!=null and productName!=''">and productName like CONCAT('%',#{productName},'%')</if>
+			<if test="productDesc!=null and productDesc!=''">and productDesc=#{productDesc}</if>
+			<if test="productUnit!=null and productUnit!=''">and productUnit=#{productUnit}</if>
+			<if test="productCount!=null and productCount!=''">and productCount=#{productCount}</if>
+			<if test="totalPrice!=null and totalPrice!=''">and totalPrice=#{totalPrice}</if>
+			<if test="isPayment!=null">and isPayment=#{isPayment}</if>
+			<if test="createdBy!=null">and createdBy=#{createdBy}</if>
+			<if test="creationDate!=null and creationDate!=''">and creationDate=#{creationDate}</if>
+			<if test="modifyBy!=null">and modifyBy=#{modifyBy}</if>
+			<if test="modifyDate!=null and modifyDate!=''">and modifyDate=#{modifyDate}</if>
+			<if test="providerId!=null">and providerId=#{providerId}</if>
+		</where>		
+	</select> 
+</mapper>
